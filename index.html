@@ -218,12 +218,10 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .ty .tick path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset 360ms var(--ease-out) 260ms}
 .ty h2{font-size:1.9rem;line-height:1.2;margin-top:6px}
 .ty p{margin:0;max-width:30em;color:#4b4d5a}
-.ty .pill{margin-top:10px;min-height:52px;padding:.85rem 2.4rem;font-size:.8rem}
-.ty .progress{position:absolute;inset:auto 0 0;height:3px;background:rgba(41,41,53,.08)}
-.ty .progress i{display:block;height:100%;background:var(--brand-grad);transform-origin:left;transform:scaleX(0)}
+.ty .hint{margin-top:6px;font-family:var(--f-ui);font-size:.7rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#6b8f4a}
+dialog.auth.done{width:min(440px,calc(100% - 32px));cursor:pointer}
 dialog.auth.done .ty .tick{transform:none;opacity:1}
 dialog.auth.done .ty .tick path{stroke-dashoffset:0}
-dialog.auth.done.run .ty .progress i{transform:scaleX(1);transition:transform var(--dur,3s) linear}
 .ty-swap{animation:tySwap 260ms var(--ease-out)}
 @keyframes tySwap{from{opacity:0;filter:blur(4px);transform:scale(.985)}to{opacity:1;filter:none;transform:none}}
 
@@ -542,21 +540,16 @@ dialog.auth.done.run .ty .progress i{transform:scaleX(1);transition:transform va
 
   <div class="ty" id="ty" hidden>
     <span class="bar" aria-hidden="true"></span>
-    <button class="x" type="button" id="tyClose" aria-label="Close and go to the vacuums shop">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l10 10M13 3 3 13"/></svg>
-    </button>
     <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
     <h2 id="tyTitle" tabindex="-1">Thank you</h2>
-    <p id="tyText">Close this message to go straight to the Guernsey Energy vacuums shop.</p>
-    <a class="pill pill-grad" id="tyGo" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums" rel="noopener">Shop vacuums</a>
-    <div class="progress" aria-hidden="true"><i></i></div>
+    <p id="tyText">Your Guernsey Energy vacuums shop is next.</p>
+    <p class="hint">Click anywhere to start shopping</p>
   </div>
 </dialog>
 
 <script>
 (function(){
   var SHOP = 'https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums';
-  var REDIRECT_MS = 3000;
   var root = document.documentElement;
   var dlg = document.getElementById('auth');
   var tabs = document.getElementById('tabs');
@@ -644,10 +637,9 @@ dialog.auth.done.run .ty .progress i{transform:scaleX(1);transition:transform va
   });
   function dismiss(){ if (dlg.classList.contains('done')) goShop(); else closeAuth(); }
   document.getElementById('authClose').addEventListener('click', function(){ closeAuth(); });
-  document.getElementById('tyClose').addEventListener('click', function(){ goShop(); });
   dlg.addEventListener('cancel', function(e){ e.preventDefault(); dismiss(); });
   dlg.addEventListener('mousedown', function(e){ if (e.target === dlg) dlg.dataset.down = '1'; });
-  dlg.addEventListener('click', function(e){ if (e.target === dlg && dlg.dataset.down) dismiss(); delete dlg.dataset.down; });
+  dlg.addEventListener('click', function(e){ if (dlg.classList.contains('done')) goShop(); else if (e.target === dlg && dlg.dataset.down) closeAuth(); delete dlg.dataset.down; });
 
   /* Password peek */
   document.querySelectorAll('[data-peek]').forEach(function(b){
@@ -717,15 +709,13 @@ dialog.auth.done.run .ty .progress i{transform:scaleX(1);transition:transform va
   panels.signup.addEventListener('submit', submitHandler('signup'));
 
   /* Thank you + redirect */
-  var ty = document.getElementById('ty'), inner = dlg.querySelector('.auth-inner'), tyGo = document.getElementById('tyGo'), timer = null, leaving = false;
+  var ty = document.getElementById('ty'), inner = dlg.querySelector('.auth-inner'), leaving = false;
   var embedded = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
-  if (embedded) { tyGo.target = '_blank'; }
   function resetDialog(){
-    clearTimeout(timer); leaving = false;
-    dlg.classList.remove('done','run'); ty.hidden = true; inner.hidden = false;
+    leaving = false;
+    dlg.classList.remove('done'); ty.hidden = true; inner.hidden = false;
   }
   function goShop(){
-    clearTimeout(timer);
     if (!embedded) {
       if (leaving) return; leaving = true;
       window.location.href = SHOP;   /* the pop-up stays on screen until the shop page paints */
@@ -740,23 +730,18 @@ dialog.auth.done.run .ty .progress i{transform:scaleX(1);transition:transform va
       ? 'Thank you' + (name ? ', ' + name : '')
       : 'Thank you for logging in';
     document.getElementById('tyText').textContent = (kind === 'signup' ? 'Your account is ready. ' : 'You\u2019re all set. ')
-      + 'Close this message to go straight to the Guernsey Energy vacuums shop.';
+      + 'Your Guernsey Energy vacuums shop is next.';
     var acct = document.getElementById('headerAcctText');
     acct.textContent = name ? 'Hi, ' + name : 'My account';
     document.getElementById('headerAcct').dataset.signedIn = '1';
     var hero = document.getElementById('heroAcct'); hero.dataset.signedIn = '1'; hero.querySelector('span').textContent = 'Shop vacuums';
     inner.hidden = true; ty.hidden = false;
     ty.classList.remove('ty-swap'); void ty.offsetWidth; ty.classList.add('ty-swap');
-    dlg.style.setProperty('--dur', REDIRECT_MS + 'ms');
-    requestAnimationFrame(function(){ dlg.classList.add('done'); requestAnimationFrame(function(){ dlg.classList.add('run'); }); });
+    requestAnimationFrame(function(){ dlg.classList.add('done'); });
     document.getElementById('tyTitle').focus({ preventScroll: true });
-    clearTimeout(timer);
-    timer = setTimeout(goShop, REDIRECT_MS);
   }
-  tyGo.addEventListener('click', function(e){
-    clearTimeout(timer);
-    if (!embedded) { e.preventDefault(); goShop(); } else { closeAuth(resetDialog); }
-  });
+  /* Any key press while the thank-you shows also continues */
+  dlg.addEventListener('keydown', function(e){ if (dlg.classList.contains('done') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); goShop(); } });
 
   /* News carousel */
   var track = document.getElementById('newsTrack'), prev = document.getElementById('prev'), next = document.getElementById('next');
