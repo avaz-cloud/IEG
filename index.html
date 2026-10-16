@@ -152,39 +152,117 @@ h1,h2,h3{font-family:var(--f-ionic);font-weight:400;margin:0;text-wrap:balance;l
 .foot-bottom a{text-decoration:none}
 .foot-bottom a:hover{text-decoration:underline}
 
-/* Account dialog */
-dialog.auth{border:0;padding:0;margin:auto;width:min(600px,calc(100% - 32px));max-height:min(88vh,860px);border-radius:18px;background:var(--white);color:var(--ink);box-shadow:0 40px 90px rgba(25,32,40,.35),0 0 0 1px rgba(41,41,53,.06);overflow:hidden;opacity:0;transform:scale(.96) translateY(8px);transition:opacity 220ms var(--ease-out),transform 260ms var(--ease-out)}
-dialog.auth[open].in{opacity:1;transform:none}
-dialog.auth.out{opacity:0;transform:scale(.97);transition-duration:150ms}
-dialog.auth::backdrop{background:rgba(41,41,53,0);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0);transition:background 260ms ease,backdrop-filter 260ms ease}
-dialog.auth.in::backdrop{background:rgba(41,41,53,.45);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
-dialog.auth.out::backdrop{background:rgba(41,41,53,0);backdrop-filter:blur(0);transition-duration:150ms}
-.auth-inner{display:flex;flex-direction:column;max-height:inherit}
-.auth-top{position:relative;padding:28px 32px 0;background:var(--mist-grad)}
-.auth-top .bar{position:absolute;inset:0 0 auto;height:4px;background:var(--brand-grad)}
-.auth-top h2{font-size:1.65rem;line-height:1.25;padding-right:44px}
-.auth-top p{margin:.45rem 0 0;font-size:.95rem;color:#4b4d5a;max-width:38em}
-.x{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.75);color:var(--ink);cursor:pointer;display:grid;place-items:center;transition:transform 160ms var(--ease-out),background 200ms ease}
+/* Booking pop-up: one dialog, three steps (book → details → booked) */
+dialog.flow{border:0;padding:0;margin:auto;width:min(var(--dlg-w,600px),calc(100% - 32px));max-height:min(90vh,900px);border-radius:18px;background:var(--white);color:var(--ink);box-shadow:0 40px 90px rgba(25,32,40,.35),0 0 0 1px rgba(41,41,53,.06);overflow:hidden;opacity:0;transform:scale(.96) translateY(8px);transition:opacity 220ms var(--ease-out),transform 260ms var(--ease-out),width 320ms var(--ease-out)}
+dialog.flow[open].in{opacity:1;transform:none}
+dialog.flow.out{opacity:0;transform:scale(.97);transition-duration:150ms}
+dialog.flow::backdrop{background:rgba(41,41,53,0);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0);transition:background 260ms ease,backdrop-filter 260ms ease}
+dialog.flow.in::backdrop{background:rgba(41,41,53,.45);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+dialog.flow.out::backdrop{background:rgba(41,41,53,0);backdrop-filter:blur(0);transition-duration:150ms}
+dialog.flow[data-step="done"]{--dlg-w:760px}
+.flow-inner{display:flex;flex-direction:column;max-height:inherit}
+.swap{animation:swapIn 260ms var(--ease-out)}
+@keyframes swapIn{from{opacity:0;filter:blur(4px);transform:translateY(4px)}to{opacity:1;filter:none;transform:none}}
+
+.flow-top{position:relative;flex:none;padding:24px 32px 22px;background:var(--mist-grad)}
+.flow-top .bar{position:absolute;inset:0 0 auto;height:4px;background:var(--brand-grad)}
+.steps{display:flex;gap:6px;margin:0 52px 16px 0;padding:0;list-style:none}
+.steps li{flex:1;display:grid;gap:6px;font-family:var(--f-ui);font-size:.64rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#7c828a}
+.steps li::before{content:"";height:3px;border-radius:3px;background:rgba(41,41,53,.12);transition:background 300ms ease}
+.steps li.on{color:var(--ink)}
+.steps li.on::before,.steps li.past::before{background:var(--brand-grad)}
+.flow-top h2{font-size:1.6rem;line-height:1.25;padding-right:44px}
+.flow-top p{margin:.4rem 0 0;font-size:.95rem;color:#4b4d5a;max-width:40em}
+.flow-top .tick{display:none;width:52px;height:52px;border-radius:50%;background:var(--brand-grad);color:var(--white);place-items:center;margin-bottom:12px;box-shadow:0 10px 24px rgba(111,170,140,.35)}
+.flow-top .tick svg{width:24px;height:24px}
+.flow-top .tick path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset 380ms var(--ease-out) 200ms}
+dialog.flow[data-step="done"] .flow-top{text-align:center;padding-top:34px}
+dialog.flow[data-step="done"] .flow-top .tick{display:grid;margin-inline:auto;animation:pop 420ms cubic-bezier(.34,1.4,.64,1)}
+dialog.flow[data-step="done"].ticked .flow-top .tick path{stroke-dashoffset:0}
+dialog.flow[data-step="done"] .steps{display:none}
+dialog.flow[data-step="done"] .flow-top h2{padding-inline:44px}
+dialog.flow[data-step="done"] .flow-top p{margin-inline:auto}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.x{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.75);color:var(--ink);cursor:pointer;display:grid;place-items:center;transition:transform 160ms var(--ease-out),background 200ms ease}
 .x:hover{background:var(--white)}
 .x:active{transform:scale(.92)}
 .x svg{width:16px;height:16px}
-.tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:22px;background:rgba(255,255,255,.6);border-radius:12px 12px 0 0;padding:6px 6px 0}
-.tab{position:relative;z-index:1;border:0;background:none;padding:.85rem 1rem;font-family:var(--f-ui);font-size:.78rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#6b6f7a;cursor:pointer;border-radius:9px 9px 0 0;transition:color 200ms ease}
+
+.flow-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:24px 32px 28px;overscroll-behavior:contain}
+.flow-foot{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:16px 32px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--white)}
+.flow-foot .sum{flex:1 1 220px;min-width:0;font-size:.92rem;line-height:1.4;color:#4b4d5a}
+.flow-foot .sum b{color:var(--ink);font-weight:500}
+.flow-foot .pill{flex:none;min-height:50px;padding:.8rem 1.8rem;font-size:.76rem}
+.flow-foot .pill[disabled]{background:#dfe4e6;color:#8a9096;cursor:not-allowed;box-shadow:none}
+.flow-foot .pill svg{width:16px;height:16px}
+
+.sec-label{font-family:var(--f-ui);font-size:.74rem;font-weight:500;letter-spacing:.02em;color:#4b4d5a;margin:0 0 10px}
+.block + .block{margin-top:26px}
+
+/* Service choice */
+.services{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.svc{position:relative;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;padding:14px 14px 14px 12px;border:1px solid #d9dde0;border-radius:12px;background:#fbfcfc;cursor:pointer;text-align:left;transition:border-color 160ms ease,background 160ms ease,box-shadow 160ms ease,transform 160ms var(--ease-out)}
+.svc:active{transform:scale(.985)}
+.svc input{position:absolute;opacity:0;pointer-events:none}
+.svc .ic{grid-row:span 2;width:36px;height:36px;border-radius:10px;background:#eef4f4;color:#5d8f95;display:grid;place-items:center}
+.svc .ic svg{width:20px;height:20px}
+.svc strong{font-family:var(--f-soft);font-weight:500;font-size:1rem;line-height:1.3}
+.svc span.d{font-size:.84rem;line-height:1.4;color:#5d616b}
+.svc:has(input:checked){border-color:transparent;background:var(--white);box-shadow:0 0 0 2px var(--green),0 8px 20px rgba(144,182,100,.18)}
+.svc:has(input:checked) .ic{background:var(--brand-grad);color:var(--white)}
+.svc:has(input:focus-visible){outline:2px solid var(--teal);outline-offset:3px}
+@media (hover:hover) and (pointer:fine){.svc:hover{border-color:#b9c4c8}}
+
+/* Calendar */
+.cal{border:1px solid #e1e5e7;border-radius:14px;padding:14px 14px 10px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-head strong{font-family:var(--f-ionic);font-weight:500;font-size:1.1rem}
+.cal-nav{display:flex;gap:6px}
+.cal-nav button{width:34px;height:34px;border-radius:50%;border:1px solid #d9dde0;background:var(--white);color:var(--ink);cursor:pointer;display:grid;place-items:center;transition:transform 160ms var(--ease-out),opacity 160ms ease}
+.cal-nav button:active{transform:scale(.92)}
+.cal-nav button:disabled{opacity:.35;cursor:default}
+.cal-nav svg{width:12px;height:12px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-grid .dow{font-family:var(--f-ui);font-size:.64rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);padding:4px 0}
+.day{position:relative;aspect-ratio:1;max-height:46px;border:0;border-radius:10px;background:none;font-family:var(--f-soft);font-size:.95rem;color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums;transition:background 140ms ease,color 140ms ease,transform 140ms var(--ease-out)}
+.day:active:not(:disabled){transform:scale(.92)}
+.day:disabled{color:#c3c8cc;cursor:default}
+.day.full:disabled{text-decoration:line-through}
+.day.today::after{content:"";position:absolute;left:50%;bottom:5px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--teal)}
+.day[aria-pressed="true"]{background:var(--brand-grad);color:var(--white);font-weight:500}
+@media (hover:hover) and (pointer:fine){.day:not(:disabled):not([aria-pressed="true"]):hover{background:#eef4f0}}
+.cal-key{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-family:var(--f-ui);font-size:.66rem;color:var(--grey)}
+
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot{min-height:48px;border:1px solid #d9dde0;border-radius:10px;background:#fbfcfc;font-family:var(--f-soft);font-size:.92rem;color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums;transition:border-color 140ms ease,background 140ms ease,transform 140ms var(--ease-out)}
+.slot small{display:block;font-family:var(--f-ui);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.slot:active:not(:disabled){transform:scale(.96)}
+.slot:disabled{background:#f3f4f5;color:#b4b9bd;cursor:default;border-style:dashed}
+.slot[aria-pressed="true"]{border-color:transparent;background:var(--brand-grad);color:var(--white)}
+.slot[aria-pressed="true"] small{color:rgba(255,255,255,.85)}
+.slots-empty{margin:0;padding:14px;border-radius:10px;background:#f5f7f8;font-size:.9rem;color:#6b6f7a}
+
+/* Step 2: booking chip + auth */
+.chip{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:#f2f7ee;margin-bottom:20px}
+.chip svg{flex:none;width:20px;height:20px;color:#6d9a45}
+.chip div{flex:1;min-width:0;font-size:.9rem;line-height:1.4;color:#3f5a2a}
+.chip b{display:block;font-weight:500;color:var(--ink)}
+.chip button{flex:none;border:0;background:none;padding:.4rem .2rem;font:inherit;font-size:.86rem;font-weight:500;color:#4f7a2f;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;background:#eef2f3;border-radius:12px;padding:4px;margin-bottom:20px}
+.tab{position:relative;z-index:1;border:0;background:none;padding:.75rem 1rem;font-family:var(--f-ui);font-size:.76rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#6b6f7a;cursor:pointer;border-radius:9px;transition:color 200ms ease}
 .tab[aria-selected="true"]{color:var(--ink)}
-.tab-ind{position:absolute;left:6px;top:6px;bottom:0;width:calc(50% - 6px);background:var(--white);border-radius:9px 9px 0 0;transition:transform 260ms var(--ease-out)}
-.tab-ind::after{content:"";position:absolute;left:28%;right:28%;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--brand-grad)}
+.tab-ind{position:absolute;left:4px;top:4px;bottom:4px;width:calc(50% - 4px);background:var(--white);border-radius:9px;box-shadow:0 2px 6px rgba(41,41,53,.08);transition:transform 260ms var(--ease-out)}
 .tabs[data-active="signup"] .tab-ind{transform:translateX(100%)}
-.auth-body{overflow-y:auto;padding:26px 32px 30px;overscroll-behavior:contain}
 .panel{display:grid;gap:16px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .field{display:grid;gap:6px;min-width:0}
-.field label,.field .lbl{font-family:var(--f-ui);font-size:.74rem;font-weight:500;letter-spacing:.02em;color:#4b4d5a}
+.field label{font-family:var(--f-ui);font-size:.74rem;font-weight:500;letter-spacing:.02em;color:#4b4d5a}
 .field .opt{color:var(--grey);font-weight:500}
 .input{width:100%;min-height:48px;padding:.75rem .95rem;border:1px solid #d5d9dc;border-radius:10px;background:#fbfcfc;font-family:var(--f-soft);font-size:1rem;color:var(--ink);transition:border-color 160ms ease,box-shadow 160ms ease,background 160ms ease}
 .input::placeholder{color:#a5aaae}
 .input:focus{outline:none;border-color:var(--teal);background:var(--white);box-shadow:0 0 0 4px rgba(131,187,194,.25)}
 .field.bad .input{border-color:var(--error);box-shadow:0 0 0 4px rgba(194,65,45,.12)}
-.err{font-family:var(--f-ui);font-size:.72rem;color:var(--error);min-height:0}
+.err{font-family:var(--f-ui);font-size:.72rem;color:var(--error)}
 .err:empty{display:none}
 .pw{position:relative}
 .pw .input{padding-right:4.6rem}
@@ -199,31 +277,65 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .check input:checked::after{opacity:1;transform:rotate(-45deg) translate(1px,-1px) scale(1)}
 .check.bad input{border-color:var(--error)}
 .text-link{color:#4f7a2f;text-underline-offset:3px;font-weight:500}
-.submit{width:100%;min-height:54px;margin-top:4px;font-size:.8rem;position:relative}
+.submit{width:100%;min-height:54px;margin-top:4px;font-size:.8rem}
 .submit .spin{display:none;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;animation:spin 600ms linear infinite}
 .submit.busy{pointer-events:none}
 .submit.busy .spin{display:block}
-.submit.busy .txt{opacity:.85}
 @keyframes spin{to{transform:rotate(360deg)}}
 .switch{text-align:center;font-size:.92rem;color:#4b4d5a;margin:2px 0 0}
 .switch button{border:0;background:none;padding:0;font:inherit;color:#4f7a2f;font-weight:500;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.islands-note{display:flex;gap:.6rem;align-items:center;padding:.7rem .9rem;border-radius:10px;background:#f2f7ee;font-size:.88rem;color:#3f5a2a}
-.islands-note svg{flex:none;width:18px;height:18px;color:var(--green)}
 
-/* Thank-you state (inside the same pop-up) */
-.ty{position:relative;display:grid;justify-items:center;text-align:center;gap:14px;padding:52px 36px 40px;background:var(--mist-grad)}
-.ty .bar{position:absolute;inset:0 0 auto;height:4px;background:var(--brand-grad)}
-.ty .tick{width:64px;height:64px;border-radius:50%;background:var(--brand-grad);color:var(--white);display:grid;place-items:center;box-shadow:0 10px 26px rgba(111,170,140,.35);transform:scale(.6);opacity:0;transition:transform 420ms cubic-bezier(.34,1.4,.64,1) 80ms,opacity 200ms ease 80ms}
-.ty .tick svg{width:28px;height:28px}
-.ty .tick path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset 360ms var(--ease-out) 260ms}
-.ty h2{font-size:1.9rem;line-height:1.2;margin-top:6px}
-.ty p{margin:0;max-width:30em;color:#4b4d5a}
-.ty .hint{margin-top:6px;font-family:var(--f-ui);font-size:.7rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#6b8f4a}
-dialog.auth.done{width:min(440px,calc(100% - 32px));cursor:pointer}
-dialog.auth.done .ty .tick{transform:none;opacity:1}
-dialog.auth.done .ty .tick path{stroke-dashoffset:0}
-.ty-swap{animation:tySwap 260ms var(--ease-out)}
-@keyframes tySwap{from{opacity:0;filter:blur(4px);transform:scale(.985)}to{opacity:1;filter:none;transform:none}}
+/* Step 3: booking receipt + shop */
+.receipt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid #e1e5e7;border-radius:14px;overflow:hidden}
+.receipt div{padding:14px 16px;min-width:0}
+.receipt div + div{border-left:1px solid #e1e5e7}
+.receipt dt{font-family:var(--f-ui);font-size:.64rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);margin-bottom:4px}
+.receipt dd{margin:0;font-size:1rem;line-height:1.35}
+.receipt-note{margin:10px 2px 0;font-size:.88rem;color:#5d616b}
+.shop{margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+.shop-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px;margin-bottom:16px}
+.shop-head h3{font-size:1.45rem;line-height:1.25}
+.shop-head p{margin:.3rem 0 0;font-size:.92rem;color:#5d616b;max-width:34em}
+.shop-head a{font-family:var(--f-ui);font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5f8a3b;text-underline-offset:3px;white-space:nowrap}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.prod{display:flex;flex-direction:column;gap:8px;padding:10px 10px 14px;border-radius:12px;background:var(--card);text-decoration:none;color:var(--ink);transition:transform 200ms var(--ease-out),box-shadow 200ms ease}
+.prod:active{transform:scale(.98)}
+.prod .pic{aspect-ratio:4/5;border-radius:8px;background:var(--white);display:grid;place-items:center;overflow:hidden}
+.prod .pic img{width:78%;height:88%;object-fit:contain;transition:transform 400ms var(--ease-out)}
+.prod .brand{font-family:var(--f-ui);font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);padding-inline:2px}
+.prod .nm{font-family:var(--f-ionic);font-size:.98rem;line-height:1.3;padding-inline:2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3.9em}
+.prod .row{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding-inline:2px;margin-top:auto}
+.prod .price{font-family:var(--f-soft);font-weight:600;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.prod .stock{font-family:var(--f-ui);font-size:.6rem;font-weight:500;color:#5f8a3b}
+.prod .stock.no{color:var(--grey)}
+.prod .view{margin-top:6px;display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:40px;background:var(--white);font-family:var(--f-ui);font-size:.66rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;box-shadow:inset 0 0 0 1px #d6dadd;transition:background 200ms ease,color 200ms ease,box-shadow 200ms ease}
+@media (hover:hover) and (pointer:fine){
+  .prod:hover{box-shadow:0 12px 26px rgba(41,41,53,.1);transform:translateY(-2px)}
+  .prod:hover .pic img{transform:scale(1.04)}
+  .prod:hover .view{background:var(--ink);color:var(--white);box-shadow:none}
+}
+.shop-fine{margin:12px 2px 0;font-family:var(--f-ui);font-size:.66rem;color:var(--grey)}
+
+@media (max-width:720px){
+  .products{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .flow-top{padding:22px 20px 18px}
+  .flow-body{padding:20px 20px 24px}
+  .flow-foot{padding-inline:20px}
+  .flow-foot .pill{flex:1 1 100%}
+  dialog.flow{width:calc(100% - 20px);max-height:94vh}
+  .services{grid-template-columns:1fr}
+  .slots{grid-template-columns:repeat(2,1fr)}
+  .row2{grid-template-columns:1fr}
+  .receipt{grid-template-columns:1fr}
+  .receipt div + div{border-left:0;border-top:1px solid #e1e5e7}
+  .steps{margin-right:48px}
+}
+@media (prefers-reduced-motion:reduce){
+  dialog.flow{transform:none!important}
+  .swap,dialog.flow[data-step="done"] .flow-top .tick{animation:none}
+}
 
 /* Mobile menu */
 .mobile-nav{display:none}
@@ -257,14 +369,9 @@ dialog.auth.done .ty .tick path{stroke-dashoffset:0}
   .hero-actions .pill{flex:1 1 100%}
   .pill-account{order:-1}
   .foot-grid{grid-template-columns:1fr}
-  .auth-top{padding:24px 20px 0}
-  .auth-body{padding:22px 20px 26px}
-  dialog.auth{width:calc(100% - 24px);max-height:92vh}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}
-  dialog.auth{transform:none!important}
-  .ty-swap{animation:none}
   .submit .spin{animation:none}
 }
 </style>
@@ -276,7 +383,7 @@ dialog.auth.done .ty .tick path{stroke-dashoffset:0}
       <div class="util">
         <a href="https://islandsenergygroup.com/news">News</a>
         <a href="https://islandsenergygroup.com/main-contact-us">Contact</a>
-        <button class="acct keep" id="headerAcct" type="button" data-open="login">
+        <button class="acct keep" id="headerAcct" type="button" data-open="auth">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/></svg>
           <span id="headerAcctText">Log in</span>
         </button>
@@ -311,14 +418,14 @@ dialog.auth.done .ty .tick path{stroke-dashoffset:0}
     <div class="wrap">
       <h1 id="heroTitle">Supplying energy to homes and business in Guernsey, Jersey and the Isle of Man</h1>
       <div class="hero-actions">
-        <button class="pill pill-grad pill-account" type="button" data-open="login" id="heroAcct">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/></svg>
-          <span>Log in / Sign up</span>
+        <button class="pill pill-grad pill-account" type="button" data-open="book" id="heroAcct">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+          <span>Book a boiler service</span>
         </button>
         <a class="pill pill-white" href="https://islandsenergygroup.com/vision">Our vision</a>
         <a class="pill pill-white" href="https://islandsenergygroup.com/our-businesses">Our businesses</a>
       </div>
-      <p class="hero-note">One account for Guernsey Energy, Island Energy and Isle of Man Energy customers.</p>
+      <p class="hero-note">Book an annual service, repair, consultation or gas safety check online.</p>
     </div>
   </section>
 
@@ -444,106 +551,195 @@ dialog.auth.done .ty .tick path{stroke-dashoffset:0}
   </div>
 </footer>
 
-<dialog class="auth" id="auth" aria-labelledby="authTitle">
-  <div class="auth-inner">
-    <div class="auth-top">
+<dialog class="flow" id="flow" aria-labelledby="flowTitle" data-step="book">
+  <div class="flow-inner">
+    <div class="flow-top">
       <span class="bar" aria-hidden="true"></span>
-      <h2 id="authTitle">Welcome back</h2>
-      <p id="authSub">Log in to manage your account and shop energy-saving products for your home.</p>
-      <button class="x" type="button" id="authClose" aria-label="Close">
+      <ol class="steps" aria-label="Booking progress">
+        <li data-s="book">Choose a visit</li>
+        <li data-s="auth">Your details</li>
+        <li data-s="done">Booked</li>
+      </ol>
+      <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+      <h2 id="flowTitle" tabindex="-1">Book your boiler visit</h2>
+      <p id="flowSub">Choose what you need, then pick a day and time that suits you.</p>
+      <button class="x" type="button" id="flowClose" aria-label="Close">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l10 10M13 3 3 13"/></svg>
       </button>
-      <div class="tabs" role="tablist" id="tabs" data-active="login">
-        <span class="tab-ind" aria-hidden="true"></span>
-        <button class="tab" role="tab" type="button" id="tab-login" aria-controls="panel-login" aria-selected="true" data-tab="login">Log in</button>
-        <button class="tab" role="tab" type="button" id="tab-signup" aria-controls="panel-signup" aria-selected="false" data-tab="signup" tabindex="-1">Sign up</button>
-      </div>
     </div>
 
-    <div class="auth-body">
-      <form class="panel" id="panel-login" role="tabpanel" aria-labelledby="tab-login" novalidate>
-        <div class="field">
-          <label for="li-email">Email address</label>
-          <input class="input" id="li-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
-          <span class="err" aria-live="polite"></span>
-        </div>
-        <div class="field">
-          <label for="li-pass">Password</label>
-          <div class="pw">
-            <input class="input" id="li-pass" name="password" type="password" autocomplete="current-password" placeholder="Your password" required minlength="8">
-            <button class="peek" type="button" data-peek="li-pass" aria-label="Show password">Show</button>
-          </div>
-          <span class="err" aria-live="polite"></span>
-        </div>
-        <div class="line-row">
-          <label class="check"><input type="checkbox" id="li-remember" checked> Keep me logged in</label>
-          <a class="text-link" href="https://islandsenergygroup.com/main-contact-us">Forgotten your password?</a>
-        </div>
-        <button class="pill pill-grad submit" type="submit"><span class="spin" aria-hidden="true"></span><span class="txt">Log in</span></button>
-        <p class="switch">New to Islands Energy? <button type="button" data-tab="signup">Create an account</button></p>
-      </form>
+    <div class="flow-body" id="flowBody">
 
-      <form class="panel" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup" novalidate hidden>
-        <div class="row2">
+      <!-- Step 1: choose a visit, a day and a time -->
+      <section data-pane="book">
+        <div class="block">
+          <p class="sec-label" id="svcLabel">What do you need?</p>
+          <div class="services" role="radiogroup" aria-labelledby="svcLabel" id="services"></div>
+        </div>
+        <div class="block">
+          <p class="sec-label" id="calLabel">Choose a day</p>
+          <div class="cal" aria-labelledby="calLabel">
+            <div class="cal-head">
+              <strong id="calMonth" aria-live="polite">Month</strong>
+              <div class="cal-nav">
+                <button type="button" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 2 3.5 6l4 4"/></svg></button>
+                <button type="button" id="calNext" aria-label="Next month"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 2l4 4-4 4"/></svg></button>
+              </div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-key"><span>Engineers visit Monday to Saturday</span><span>Crossed-out days are fully booked</span></div>
+          </div>
+        </div>
+        <div class="block">
+          <p class="sec-label" id="slotLabel">Choose an arrival time</p>
+          <div id="slotWrap"><p class="slots-empty">Pick a day to see the times available.</p></div>
+        </div>
+      </section>
+
+      <!-- Step 2: log in or sign up -->
+      <section data-pane="auth" hidden>
+        <div class="chip" id="chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+          <div><b id="chipSvc">Annual boiler service</b><span id="chipWhen">Tue 21 Oct, 8am to 10am</span></div>
+          <button type="button" id="chipChange">Change</button>
+        </div>
+        <div class="tabs" role="tablist" id="tabs" data-active="login">
+          <span class="tab-ind" aria-hidden="true"></span>
+          <button class="tab" role="tab" type="button" id="tab-login" aria-controls="panel-login" aria-selected="true" data-tab="login">Log in</button>
+          <button class="tab" role="tab" type="button" id="tab-signup" aria-controls="panel-signup" aria-selected="false" data-tab="signup" tabindex="-1">Sign up</button>
+        </div>
+
+        <form class="panel" id="panel-login" role="tabpanel" aria-labelledby="tab-login" novalidate>
           <div class="field">
-            <label for="su-first">First name</label>
-            <input class="input" id="su-first" name="first" type="text" autocomplete="given-name" required>
+            <label for="li-email">Email address</label>
+            <input class="input" id="li-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
             <span class="err" aria-live="polite"></span>
           </div>
           <div class="field">
-            <label for="su-last">Last name</label>
-            <input class="input" id="su-last" name="last" type="text" autocomplete="family-name" required>
+            <label for="li-pass">Password</label>
+            <div class="pw">
+              <input class="input" id="li-pass" name="password" type="password" autocomplete="current-password" placeholder="Your password" required minlength="8">
+              <button class="peek" type="button" data-peek="li-pass" aria-label="Show password">Show</button>
+            </div>
             <span class="err" aria-live="polite"></span>
           </div>
-        </div>
-        <div class="field">
-          <label for="su-email">Email address</label>
-          <input class="input" id="su-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
-          <span class="err" aria-live="polite"></span>
-        </div>
-        <div class="row2">
+          <div class="line-row">
+            <label class="check"><input type="checkbox" id="li-remember" checked> Keep me logged in</label>
+            <a class="text-link" href="https://islandsenergygroup.com/main-contact-us">Forgotten your password?</a>
+          </div>
+          <button class="pill pill-grad submit" type="submit"><span class="spin" aria-hidden="true"></span><span class="txt" data-idle="Log in and book">Log in and book</span></button>
+          <p class="switch">New to Islands Energy? <button type="button" data-tab="signup">Create an account</button></p>
+        </form>
+
+        <form class="panel" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup" novalidate hidden>
+          <div class="row2">
+            <div class="field">
+              <label for="su-first">First name</label>
+              <input class="input" id="su-first" name="first" type="text" autocomplete="given-name" required>
+              <span class="err" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="su-last">Last name</label>
+              <input class="input" id="su-last" name="last" type="text" autocomplete="family-name" required>
+              <span class="err" aria-live="polite"></span>
+            </div>
+          </div>
           <div class="field">
-            <label for="su-island">Your island</label>
-            <select class="input" id="su-island" name="island" required>
-              <option value="Guernsey" selected>Guernsey</option>
-              <option value="Jersey">Jersey</option>
-              <option value="Isle of Man">Isle of Man</option>
-            </select>
+            <label for="su-email">Email address</label>
+            <input class="input" id="su-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
             <span class="err" aria-live="polite"></span>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="su-island">Your island</label>
+              <select class="input" id="su-island" name="island" required>
+                <option value="Guernsey" selected>Guernsey</option>
+                <option value="Jersey">Jersey</option>
+                <option value="Isle of Man">Isle of Man</option>
+              </select>
+              <span class="err" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="su-post">Postcode</label>
+              <input class="input" id="su-post" name="postcode" type="text" autocomplete="postal-code" placeholder="GY1 1AA" required>
+              <span class="err" aria-live="polite"></span>
+            </div>
           </div>
           <div class="field">
-            <label for="su-acc">Account number <span class="opt">(optional)</span></label>
-            <input class="input" id="su-acc" name="account" type="text" inputmode="numeric" autocomplete="off" placeholder="From your bill">
+            <label for="su-pass">Create a password</label>
+            <div class="pw">
+              <input class="input" id="su-pass" name="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" required minlength="8">
+              <button class="peek" type="button" data-peek="su-pass" aria-label="Show password">Show</button>
+            </div>
             <span class="err" aria-live="polite"></span>
           </div>
-        </div>
-        <div class="field">
-          <label for="su-pass">Create a password</label>
-          <div class="pw">
-            <input class="input" id="su-pass" name="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" required minlength="8">
-            <button class="peek" type="button" data-peek="su-pass" aria-label="Show password">Show</button>
+          <label class="check" id="su-terms-wrap"><input type="checkbox" id="su-terms" required> <span>I agree to the <a class="text-link" href="https://islandsenergygroup.com/terms-conditions">terms &amp; conditions</a> and <a class="text-link" href="https://islandsenergygroup.com/main-privacy-policy">privacy policy</a>.</span></label>
+          <span class="err" id="su-terms-err" aria-live="polite"></span>
+          <label class="check"><input type="checkbox" id="su-news"> <span>Send me energy-saving tips and offers by email.</span></label>
+          <button class="pill pill-grad submit" type="submit"><span class="spin" aria-hidden="true"></span><span class="txt" data-idle="Create account and book">Create account and book</span></button>
+          <p class="switch">Already have an account? <button type="button" data-tab="login">Log in</button></p>
+        </form>
+      </section>
+
+      <!-- Step 3: booked, plus the vacuum shop -->
+      <section data-pane="done" hidden>
+        <dl class="receipt" id="receipt">
+          <div><dt>Visit</dt><dd id="rSvc">Annual boiler service</dd></div>
+          <div><dt>Day</dt><dd id="rDay">Tuesday 21 October</dd></div>
+          <div><dt>Arrival</dt><dd id="rTime">8am to 10am</dd></div>
+        </dl>
+        <p class="receipt-note" id="rNote">Your engineer will arrive within this window.</p>
+
+        <div class="shop">
+          <div class="shop-head">
+            <div>
+              <h3>Boiler sorted. Now for the floors.</h3>
+              <p>While you're here, have a look at the vacuums in the Guernsey Energy shop, with delivery or Click &amp; Collect.</p>
+            </div>
+            <a href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums" class="shop-link">See all vacuums</a>
           </div>
-          <span class="err" aria-live="polite"></span>
+          <div class="products">
+            <a class="prod shop-link" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums">
+              <div class="pic"><img src="data:image/webp;base64,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" alt="Dyson Ball upright vacuum cleaner"></div>
+              <span class="brand">Dyson</span>
+              <span class="nm">Dyson Ball Upright Vacuum Cleaner</span>
+              <div class="row"><span class="price">£233.00</span><span class="stock">Available to order</span></div>
+              <span class="view">View in shop</span>
+            </a>
+            <a class="prod shop-link" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums">
+              <div class="pic"><img src="data:image/webp;base64,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" alt="Dyson Ball Animal multi-floor upright vacuum"></div>
+              <span class="brand">Dyson</span>
+              <span class="nm">Dyson Ball Animal Multi-floor Upright Vacuum</span>
+              <div class="row"><span class="price">£316.00</span><span class="stock">Available to order</span></div>
+              <span class="view">View in shop</span>
+            </a>
+            <a class="prod shop-link" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums">
+              <div class="pic"><img src="data:image/webp;base64,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" alt="Shark Lift-Away upright vacuum, pet model"></div>
+              <span class="brand">Shark</span>
+              <span class="nm">Shark Lift-Away Upright Vacuum Pet Model</span>
+              <div class="row"><span class="price">£191.00</span><span class="stock no">Out of stock</span></div>
+              <span class="view">View in shop</span>
+            </a>
+            <a class="prod shop-link" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums">
+              <div class="pic"><img src="data:image/webp;base64,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" alt="Shark Klik n'Flip steam pocket mop"></div>
+              <span class="brand">Shark</span>
+              <span class="nm">Shark Klik n'Flip Automatic Steam Pocket Mop</span>
+              <div class="row"><span class="price">£116.00</span><span class="stock">Available to order</span></div>
+              <span class="view">View in shop</span>
+            </a>
+          </div>
+          <p class="shop-fine">Prices and stock as shown on guernseyenergy.gg in October 2026.</p>
         </div>
-        <div class="islands-note" id="islandNote">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-          <span id="islandNoteText">You'll be set up with Guernsey Energy.</span>
-        </div>
-        <label class="check" id="su-terms-wrap"><input type="checkbox" id="su-terms" required> <span>I agree to the <a class="text-link" href="https://islandsenergygroup.com/terms-conditions">terms &amp; conditions</a> and <a class="text-link" href="https://islandsenergygroup.com/main-privacy-policy">privacy policy</a>.</span></label>
-        <span class="err" id="su-terms-err" aria-live="polite"></span>
-        <label class="check"><input type="checkbox" id="su-news"> <span>Send me energy-saving tips and offers by email.</span></label>
-        <button class="pill pill-grad submit" type="submit"><span class="spin" aria-hidden="true"></span><span class="txt">Create account</span></button>
-        <p class="switch">Already have an account? <button type="button" data-tab="login">Log in</button></p>
-      </form>
+      </section>
     </div>
-  </div>
 
-  <div class="ty" id="ty" hidden>
-    <span class="bar" aria-hidden="true"></span>
-    <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
-    <h2 id="tyTitle" tabindex="-1">Thank you</h2>
-    <p id="tyText">Your Guernsey Energy vacuums shop is next.</p>
-    <p class="hint">Click anywhere to start shopping</p>
+    <div class="flow-foot" id="flowFoot">
+      <p class="sum" id="sum" aria-live="polite">Choose a visit, a day and a time to continue.</p>
+      <button class="pill pill-grad" type="button" id="toAuth" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/></svg>
+        <span>Log in / Sign up to book</span>
+      </button>
+    </div>
   </div>
 </dialog>
 
@@ -551,207 +747,301 @@ dialog.auth.done .ty .tick path{stroke-dashoffset:0}
 (function(){
   var SHOP = 'https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums';
   var root = document.documentElement;
-  var dlg = document.getElementById('auth');
-  var tabs = document.getElementById('tabs');
-  var title = document.getElementById('authTitle');
-  var sub = document.getElementById('authSub');
-  var panels = { login: document.getElementById('panel-login'), signup: document.getElementById('panel-signup') };
-  var copy = {
-    login: ['Welcome back', 'Log in to manage your account and shop energy-saving products for your home.'],
-    signup: ['Create your account', 'One account for Guernsey Energy, Island Energy and Isle of Man Energy customers.']
-  };
-  var lastTrigger = null;
+  var $ = function(id){ return document.getElementById(id); };
 
-  /* Mobile menu */
-  var menuBtn = document.getElementById('menuBtn'), mnav = document.getElementById('mobileNav');
+  /* ---------- Mobile menu ---------- */
+  var menuBtn = $('menuBtn'), mnav = $('mobileNav');
   menuBtn.addEventListener('click', function(){
     var open = mnav.classList.toggle('open');
     menuBtn.setAttribute('aria-expanded', open);
     menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   });
 
-  /* Tabs */
-  function setTab(name, focus){
-    tabs.dataset.active = name;
-    ['login','signup'].forEach(function(t){
-      var on = t === name;
-      var b = document.getElementById('tab-' + t);
-      b.setAttribute('aria-selected', on);
-      b.tabIndex = on ? 0 : -1;
-      panels[t].hidden = !on;
-    });
-    title.textContent = copy[name][0];
-    sub.textContent = copy[name][1];
-    if (focus) { var f = panels[name].querySelector('input'); if (f) f.focus(); }
+  /* ---------- Booking state ---------- */
+  var SERVICES = [
+    { id:'service', name:'Annual boiler service', desc:'Yearly check and clean to keep your boiler safe and efficient.',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3.5 17.5l3 3 5.8-5.8a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5 2.5-2.5Z"/></svg>' },
+    { id:'repair', name:'Boiler repair', desc:'Something not working? An engineer will find the fault and fix it.',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c.8 3.2 4.5 5.1 4.5 9.2a4.5 4.5 0 0 1-9 0c0-2 1-3.3 2-4.4.3 1.6 1 2.4 2 2.7-.4-2.8-.2-5 .5-7.5Z"/></svg>' },
+    { id:'consult', name:'New boiler consultation', desc:'A home visit to talk through replacement options and get a quote.',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10H9l-5 4v-14Z"/><path d="M8.5 10.5h7"/></svg>' },
+    { id:'safety', name:'Gas safety check', desc:'Safety inspection and certificate for homeowners and landlords.',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5.5c0 4.3 3 7.7 7 9.5 4-1.8 7-5.2 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>' }
+  ];
+  var SLOTS = [ ['8am','10am','Morning'], ['10am','12pm','Morning'], ['12pm','2pm','Afternoon'], ['2pm','4pm','Afternoon'] ];
+  var state = { service:null, date:null, slot:null, withBooking:true };
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var minDate = new Date(today); minDate.setDate(minDate.getDate() + 1);
+  var maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + 56);
+  var view = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+
+  function sameDay(a,b){ return a && b && a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+  function seed(d){ return d.getFullYear()*372 + d.getMonth()*31 + d.getDate(); }
+  function isFull(d){ return d.getDay() !== 0 && seed(d) % 7 === 3; }
+  function slotTaken(d, i){ return (seed(d) + i * 5) % 6 === 0; }
+  function fmtShort(d){ return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' }).replace(',', ''); }
+  function fmtLong(d){ return d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' }).replace(',', ''); }
+  function slotText(i){ return SLOTS[i][0] + ' to ' + SLOTS[i][1]; }
+  function svcName(){ var s = SERVICES.find(function(x){ return x.id === state.service; }); return s ? s.name : ''; }
+
+  /* Services */
+  var svcWrap = $('services');
+  svcWrap.innerHTML = SERVICES.map(function(s){
+    return '<label class="svc"><input type="radio" name="svc" value="' + s.id + '"><span class="ic" aria-hidden="true">' + s.icon + '</span><strong>' + s.name + '</strong><span class="d">' + s.desc + '</span></label>';
+  }).join('');
+  svcWrap.addEventListener('change', function(e){ state.service = e.target.value; updateFoot(); });
+
+  /* Calendar */
+  var grid = $('calGrid'), monthLbl = $('calMonth'), prevBtn = $('calPrev'), nextBtn = $('calNext');
+  function renderCal(){
+    monthLbl.textContent = view.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+    var html = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(function(d){ return '<span class="dow" aria-hidden="true">' + d + '</span>'; }).join('');
+    var first = new Date(view), lead = (first.getDay() + 6) % 7;
+    for (var i = 0; i < lead; i++) html += '<span aria-hidden="true"></span>';
+    var days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+    for (var dnum = 1; dnum <= days; dnum++) {
+      var d = new Date(view.getFullYear(), view.getMonth(), dnum);
+      var closed = d.getDay() === 0, out = d < minDate || d > maxDate, full = !out && isFull(d);
+      var cls = 'day' + (full ? ' full' : '') + (sameDay(d, today) ? ' today' : '');
+      var label = fmtLong(d) + (closed ? ', no visits' : full ? ', fully booked' : out ? ', not available' : '');
+      html += '<button type="button" class="' + cls + '" data-d="' + d.getTime() + '" aria-label="' + label + '" aria-pressed="' + (sameDay(d, state.date) ? 'true' : 'false') + '"' + ((closed || out || full) ? ' disabled' : '') + '>' + dnum + '</button>';
+    }
+    grid.innerHTML = html;
+    prevBtn.disabled = view <= new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+    nextBtn.disabled = view >= new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
   }
-  document.querySelectorAll('[data-tab]').forEach(function(b){
-    b.addEventListener('click', function(){ setTab(b.dataset.tab, b.classList.contains('tab') ? false : true); if (b.classList.contains('tab')) b.focus(); });
+  grid.addEventListener('click', function(e){
+    var b = e.target.closest('.day'); if (!b || b.disabled) return;
+    state.date = new Date(+b.dataset.d);
+    if (state.slot !== null && slotTaken(state.date, state.slot)) state.slot = null;
+    grid.querySelectorAll('.day[aria-pressed="true"]').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    b.setAttribute('aria-pressed','true');
+    renderSlots(); updateFoot();
   });
-  tabs.addEventListener('keydown', function(e){
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-    var next = tabs.dataset.active === 'login' ? 'signup' : 'login';
-    setTab(next); document.getElementById('tab-' + next).focus();
+  prevBtn.addEventListener('click', function(){ view.setMonth(view.getMonth() - 1); renderCal(); });
+  nextBtn.addEventListener('click', function(){ view.setMonth(view.getMonth() + 1); renderCal(); });
+
+  /* Time slots */
+  var slotWrap = $('slotWrap');
+  function renderSlots(){
+    if (!state.date) { slotWrap.innerHTML = '<p class="slots-empty">Pick a day to see the times available.</p>'; return; }
+    slotWrap.innerHTML = '<div class="slots" role="group" aria-labelledby="slotLabel">' + SLOTS.map(function(s, i){
+      var taken = slotTaken(state.date, i);
+      return '<button type="button" class="slot" data-i="' + i + '" aria-pressed="' + (state.slot === i ? 'true' : 'false') + '"' + (taken ? ' disabled aria-label="' + slotText(i) + ', taken"' : '') + '>' + s[0] + '–' + s[1] + '<small>' + (taken ? 'Taken' : s[2]) + '</small></button>';
+    }).join('') + '</div>';
+  }
+  slotWrap.addEventListener('click', function(e){
+    var b = e.target.closest('.slot'); if (!b || b.disabled) return;
+    state.slot = +b.dataset.i;
+    slotWrap.querySelectorAll('.slot').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    updateFoot();
   });
 
-  /* Open / close */
-  var warmed = false;
-  function warmShop(){
-    if (warmed) return; warmed = true;
-    try {
-      [['preconnect','https://guernseyenergy.gg'],['prefetch',SHOP]].forEach(function(p){
-        var l = document.createElement('link'); l.rel = p[0]; l.href = p[1]; if (p[0]==='preconnect') l.crossOrigin = '';
-        document.head.appendChild(l);
-      });
-      if (HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) {
-        var s = document.createElement('script'); s.type = 'speculationrules';
-        s.textContent = JSON.stringify({ prefetch: [{ source: 'list', urls: [SHOP] }] });
-        document.head.appendChild(s);
-      }
-    } catch (e) {}
+  /* Footer summary + the Log in / Sign up button */
+  var sum = $('sum'), toAuth = $('toAuth');
+  function updateFoot(){
+    var missing = [];
+    if (!state.service) missing.push('a visit');
+    if (!state.date) missing.push('a day');
+    if (state.slot === null) missing.push('a time');
+    if (!missing.length) {
+      sum.innerHTML = '<b>' + svcName() + '</b><br>' + fmtShort(state.date) + ', ' + slotText(state.slot);
+      toAuth.disabled = false;
+    } else {
+      sum.textContent = 'Choose ' + missing.join(', ').replace(/, ([^,]*)$/, ' and $1') + ' to continue.';
+      toAuth.disabled = true;
+    }
   }
-  function openAuth(tab, trigger){
-    warmShop();
+  toAuth.addEventListener('click', function(){ state.withBooking = true; goStep('auth'); });
+
+  /* ---------- Dialog & steps ---------- */
+  var dlg = $('flow'), body = $('flowBody'), foot = $('flowFoot'), title = $('flowTitle'), sub = $('flowSub');
+  var panes = { book: dlg.querySelector('[data-pane="book"]'), auth: dlg.querySelector('[data-pane="auth"]'), done: dlg.querySelector('[data-pane="done"]') };
+  var ORDER = ['book','auth','done'];
+  var lastTrigger = null;
+
+  function setSteps(step){
+    var idx = ORDER.indexOf(step);
+    dlg.querySelectorAll('.steps li').forEach(function(li, i){
+      li.classList.toggle('on', i === idx); li.classList.toggle('past', i < idx);
+      if (i === idx) li.setAttribute('aria-current','step'); else li.removeAttribute('aria-current');
+    });
+    dlg.querySelector('.steps').hidden = !state.withBooking;
+  }
+  function goStep(step, opts){
+    opts = opts || {};
+    dlg.dataset.step = step;
+    Object.keys(panes).forEach(function(k){ panes[k].hidden = k !== step; });
+    foot.hidden = step !== 'book';
+    setSteps(step);
+    if (step === 'book') {
+      title.textContent = 'Book your boiler visit';
+      sub.textContent = 'Choose what you need, then pick a day and time that suits you.';
+    } else if (step === 'auth') {
+      title.textContent = state.withBooking ? 'Nearly there' : 'Welcome back';
+      sub.textContent = state.withBooking ? 'Log in or create an account to confirm your booking.' : 'Log in to manage your account.';
+      $('chip').hidden = !state.withBooking;
+      if (state.withBooking) { $('chipSvc').textContent = svcName(); $('chipWhen').textContent = fmtShort(state.date) + ', ' + slotText(state.slot); }
+      dlg.querySelectorAll('.submit .txt').forEach(function(t){ var idle = t.dataset.idle; t.textContent = state.withBooking ? idle : idle.replace(' and book',''); });
+    }
+    body.scrollTop = 0;
+    body.classList.remove('swap'); void body.offsetWidth; body.classList.add('swap');
+    if (!opts.silent) setTimeout(function(){
+      if (step === 'auth') { var f = panes.auth.querySelector('form:not([hidden]) input'); if (f) f.focus(); }
+      else title.focus({ preventScroll:true });
+    }, 40);
+  }
+
+  function openFlow(step, trigger){
     lastTrigger = trigger || null;
-    setTab(tab || 'login');
+    if (step === 'auth') state.withBooking = false;
+    goStep(step || 'book', { silent:true });
     if (!dlg.open) {
       dlg.classList.remove('out');
       dlg.showModal();
       root.classList.add('locked');
       requestAnimationFrame(function(){ requestAnimationFrame(function(){ dlg.classList.add('in'); }); });
     }
-    setTimeout(function(){ var f = panels[tabs.dataset.active].querySelector('input'); if (f) f.focus(); }, 60);
+    setTimeout(function(){ (step === 'auth' ? panes.auth.querySelector('input') : title).focus({ preventScroll:true }); }, 60);
   }
-  function closeAuth(cb){
-    if (!dlg.open) { if (cb) cb(); return; }
+  function closeFlow(){
+    if (!dlg.open) return;
     dlg.classList.remove('in'); dlg.classList.add('out');
     var done = false;
-    function fin(){ if (done) return; done = true; dlg.close(); dlg.classList.remove('out'); root.classList.remove('locked'); if (lastTrigger && !cb) lastTrigger.focus(); if (cb) cb(); }
-    dlg.addEventListener('transitionend', fin, { once: true });
+    function fin(){
+      if (done) return; done = true;
+      dlg.close(); dlg.classList.remove('out','ticked'); root.classList.remove('locked');
+      if (dlg.dataset.step === 'done') resetBooking();
+      if (lastTrigger) lastTrigger.focus();
+    }
+    dlg.addEventListener('transitionend', fin, { once:true });
     setTimeout(fin, 220);
   }
-  document.querySelectorAll('[data-open]').forEach(function(b){
-    b.addEventListener('click', function(){
-      if (b.dataset.signedIn) { goShop(); return; }
-      openAuth(b.dataset.open, b);
-    });
-  });
-  function dismiss(){ if (dlg.classList.contains('done')) goShop(); else closeAuth(); }
-  document.getElementById('authClose').addEventListener('click', function(){ closeAuth(); });
-  dlg.addEventListener('cancel', function(e){ e.preventDefault(); dismiss(); });
-  dlg.addEventListener('mousedown', function(e){ if (e.target === dlg) dlg.dataset.down = '1'; });
-  dlg.addEventListener('click', function(e){ if (dlg.classList.contains('done')) goShop(); else if (e.target === dlg && dlg.dataset.down) closeAuth(); delete dlg.dataset.down; });
+  function resetBooking(){
+    state.service = null; state.date = null; state.slot = null; state.withBooking = true;
+    svcWrap.querySelectorAll('input').forEach(function(i){ i.checked = false; });
+    view = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+    renderCal(); renderSlots(); updateFoot();
+    goStep('book', { silent:true });
+  }
 
-  /* Password peek */
-  document.querySelectorAll('[data-peek]').forEach(function(b){
+  document.querySelectorAll('[data-open]').forEach(function(b){
+    b.addEventListener('click', function(){ openFlow(b.dataset.open, b); });
+  });
+  $('flowClose').addEventListener('click', closeFlow);
+  $('chipChange').addEventListener('click', function(){ goStep('book'); });
+  dlg.addEventListener('cancel', function(e){ e.preventDefault(); closeFlow(); });
+  dlg.addEventListener('mousedown', function(e){ dlg.dataset.down = e.target === dlg ? '1' : ''; });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg && dlg.dataset.down) closeFlow(); });
+
+  /* ---------- Log in / Sign up ---------- */
+  var tabs = $('tabs'), forms = { login: $('panel-login'), signup: $('panel-signup') };
+  function setTab(name, focusField){
+    tabs.dataset.active = name;
+    ['login','signup'].forEach(function(t){
+      var on = t === name, b = $('tab-' + t);
+      b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; forms[t].hidden = !on;
+    });
+    if (focusField) { var f = forms[name].querySelector('input'); if (f) f.focus(); }
+  }
+  dlg.querySelectorAll('[data-tab]').forEach(function(b){
+    b.addEventListener('click', function(){ var isTab = b.classList.contains('tab'); setTab(b.dataset.tab, !isTab); if (isTab) b.focus(); });
+  });
+  tabs.addEventListener('keydown', function(e){
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var next = tabs.dataset.active === 'login' ? 'signup' : 'login'; setTab(next); $('tab-' + next).focus();
+  });
+  dlg.querySelectorAll('[data-peek]').forEach(function(b){
     b.addEventListener('click', function(){
-      var i = document.getElementById(b.dataset.peek);
-      var show = i.type === 'password';
-      i.type = show ? 'text' : 'password';
-      b.textContent = show ? 'Hide' : 'Show';
+      var i = $(b.dataset.peek), show = i.type === 'password';
+      i.type = show ? 'text' : 'password'; b.textContent = show ? 'Hide' : 'Show';
       b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
     });
   });
 
-  /* Island note */
-  var island = document.getElementById('su-island'), noteText = document.getElementById('islandNoteText');
-  var brand = { 'Guernsey': 'Guernsey Energy', 'Jersey': 'Island Energy', 'Isle of Man': 'Isle of Man Energy' };
-  island.addEventListener('change', function(){ noteText.textContent = "You'll be set up with " + brand[island.value] + '.'; });
-
-  /* Validation */
   var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   function msgFor(input){
     var v = input.value.trim();
     if (input.required && !v) {
-      if (input.type === 'email') return 'Enter your email address.';
-      if (input.type === 'password') return 'Enter a password.';
-      if (input.id === 'su-first') return 'Enter your first name.';
-      if (input.id === 'su-last') return 'Enter your last name.';
-      return 'This field is needed.';
+      return { 'li-email':'Enter your email address.', 'su-email':'Enter your email address.', 'li-pass':'Enter your password.', 'su-pass':'Create a password.',
+               'su-first':'Enter your first name.', 'su-last':'Enter your last name.', 'su-post':'Enter your postcode so we know where to send the engineer.' }[input.id] || 'This field is needed.';
     }
     if (input.type === 'email' && v && !emailRe.test(v)) return 'Enter an email address like name@example.com.';
-    if ((input.id === 'su-pass' || input.id === 'li-pass') && v && v.length < 8) return 'Passwords are at least 8 characters.';
-    if (input.id === 'su-acc' && v && !/^\d{4,12}$/.test(v)) return 'Account numbers are 4 to 12 digits, found on your bill.';
+    if (input.type === 'password' && v && v.length < 8) return 'Passwords are at least 8 characters.';
+    if (input.id === 'su-post' && v && !/^[A-Za-z]{1,2}\d[A-Za-z\d]?\s*\d[A-Za-z]{2}$/.test(v)) return 'Enter a postcode like GY1 1AA, JE2 3AB or IM1 2CD.';
     return '';
   }
   function check(input){
     var field = input.closest('.field'); if (!field) return true;
     var m = msgFor(input);
-    field.classList.toggle('bad', !!m);
-    input.setAttribute('aria-invalid', m ? 'true' : 'false');
-    field.querySelector('.err').textContent = m;
-    return !m;
+    field.classList.toggle('bad', !!m); input.setAttribute('aria-invalid', m ? 'true' : 'false');
+    field.querySelector('.err').textContent = m; return !m;
   }
-  document.querySelectorAll('.panel .input').forEach(function(i){
+  dlg.querySelectorAll('.panel .input').forEach(function(i){
     i.addEventListener('blur', function(){ if (i.value) check(i); });
     i.addEventListener('input', function(){ if (i.closest('.field').classList.contains('bad')) check(i); });
   });
-  var terms = document.getElementById('su-terms'), termsErr = document.getElementById('su-terms-err'), termsWrap = document.getElementById('su-terms-wrap');
+  var terms = $('su-terms'), termsErr = $('su-terms-err'), termsWrap = $('su-terms-wrap');
   terms.addEventListener('change', function(){ if (terms.checked) { termsErr.textContent = ''; termsWrap.classList.remove('bad'); } });
 
-  function submitHandler(kind){
+  function onSubmit(kind){
     return function(e){
       e.preventDefault();
-      var form = panels[kind], ok = true, first = null;
+      var form = forms[kind], ok = true, first = null;
       form.querySelectorAll('.input').forEach(function(i){ if (!check(i)) { ok = false; first = first || i; } });
-      if (kind === 'signup' && !terms.checked) {
-        ok = false; termsErr.textContent = 'Tick the box to agree to the terms before creating your account.'; termsWrap.classList.add('bad'); first = first || terms;
-      }
+      if (kind === 'signup' && !terms.checked) { ok = false; termsErr.textContent = 'Tick the box to agree to the terms before creating your account.'; termsWrap.classList.add('bad'); first = first || terms; }
       if (!ok) { first.focus(); return; }
-      var btn = form.querySelector('.submit'); btn.classList.add('busy'); btn.querySelector('.txt').textContent = kind === 'login' ? 'Logging in' : 'Creating account';
-      var name = kind === 'signup' ? document.getElementById('su-first').value.trim() : '';
+      var btn = form.querySelector('.submit'), txt = btn.querySelector('.txt'), was = txt.textContent;
+      btn.classList.add('busy'); txt.textContent = state.withBooking ? 'Booking your visit' : 'Logging in';
+      var name = kind === 'signup' ? $('su-first').value.trim() : '';
+      var email = form.querySelector('input[type="email"]').value.trim();
       setTimeout(function(){
-        btn.classList.remove('busy'); btn.querySelector('.txt').textContent = kind === 'login' ? 'Log in' : 'Create account';
-        form.reset(); noteText.textContent = "You'll be set up with Guernsey Energy."; showThanks(kind, name);
+        btn.classList.remove('busy'); txt.textContent = was;
+        form.reset(); showDone(kind, name, email);
       }, 750);
     };
   }
-  panels.login.addEventListener('submit', submitHandler('login'));
-  panels.signup.addEventListener('submit', submitHandler('signup'));
+  forms.login.addEventListener('submit', onSubmit('login'));
+  forms.signup.addEventListener('submit', onSubmit('signup'));
 
-  /* Thank you + redirect */
-  var ty = document.getElementById('ty'), inner = dlg.querySelector('.auth-inner'), leaving = false;
+  /* ---------- Booked + shop ---------- */
+  function warmShop(){
+    try {
+      [['preconnect','https://guernseyenergy.gg'],['prefetch',SHOP]].forEach(function(p){
+        var l = document.createElement('link'); l.rel = p[0]; l.href = p[1]; document.head.appendChild(l);
+      });
+    } catch(e){}
+  }
+  function showDone(kind, name, email){
+    warmShop();
+    var hi = name ? ', ' + name : '';
+    title.textContent = state.withBooking ? 'Thank you' + hi + '. You’re booked in.' : 'Thank you' + hi + '. You’re logged in.';
+    sub.textContent = state.withBooking ? 'We’ll send your confirmation to ' + email + '.' : 'Your account is ready to use.';
+    $('receipt').hidden = !state.withBooking; $('rNote').hidden = !state.withBooking;
+    if (state.withBooking) { $('rSvc').textContent = svcName(); $('rDay').textContent = fmtLong(state.date); $('rTime').textContent = slotText(state.slot); }
+    dlg.querySelector('.shop h3').textContent = state.withBooking ? 'Boiler sorted. Now for the floors.' : 'Fancy a fresh start for the floors?';
+    $('headerAcctText').textContent = name ? 'Hi, ' + name : 'My account';
+    goStep('done');
+    requestAnimationFrame(function(){ dlg.classList.add('ticked'); });
+  }
+  /* In a preview frame the shop opens in a new tab; as a normal web page it opens in the same tab */
   var embedded = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
-  function resetDialog(){
-    leaving = false;
-    dlg.classList.remove('done'); ty.hidden = true; inner.hidden = false;
-  }
-  function goShop(){
-    if (!embedded) {
-      if (leaving) return; leaving = true;
-      window.location.href = SHOP;   /* the pop-up stays on screen until the shop page paints */
-      return;
-    }
-    /* Inside a preview frame the browser may block leaving the page, so open the shop in a new tab instead */
-    var w = null; try { w = window.open(SHOP, '_blank'); } catch(e){}
-    closeAuth(resetDialog);
-  }
-  function showThanks(kind, name){
-    document.getElementById('tyTitle').textContent = kind === 'signup'
-      ? 'Thank you' + (name ? ', ' + name : '')
-      : 'Thank you for logging in';
-    document.getElementById('tyText').textContent = (kind === 'signup' ? 'Your account is ready. ' : 'You\u2019re all set. ')
-      + 'Your Guernsey Energy vacuums shop is next.';
-    var acct = document.getElementById('headerAcctText');
-    acct.textContent = name ? 'Hi, ' + name : 'My account';
-    document.getElementById('headerAcct').dataset.signedIn = '1';
-    var hero = document.getElementById('heroAcct'); hero.dataset.signedIn = '1'; hero.querySelector('span').textContent = 'Shop vacuums';
-    inner.hidden = true; ty.hidden = false;
-    ty.classList.remove('ty-swap'); void ty.offsetWidth; ty.classList.add('ty-swap');
-    requestAnimationFrame(function(){ dlg.classList.add('done'); });
-    document.getElementById('tyTitle').focus({ preventScroll: true });
-  }
-  /* Any key press while the thank-you shows also continues */
-  dlg.addEventListener('keydown', function(e){ if (dlg.classList.contains('done') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); goShop(); } });
+  dlg.querySelectorAll('.shop-link').forEach(function(a){ if (embedded) { a.target = '_blank'; a.rel = 'noopener'; } });
 
-  /* News carousel */
-  var track = document.getElementById('newsTrack'), prev = document.getElementById('prev'), next = document.getElementById('next');
+  /* ---------- News carousel ---------- */
+  var track = $('newsTrack'), prev = $('prev'), next = $('next');
   function step(){ var c = track.querySelector('.story'); return c ? c.getBoundingClientRect().width + 20 : 300; }
   function sync(){ prev.disabled = track.scrollLeft < 4; next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 4; }
-  prev.addEventListener('click', function(){ track.scrollBy({ left: -step(), behavior: 'smooth' }); });
-  next.addEventListener('click', function(){ track.scrollBy({ left: step(), behavior: 'smooth' }); });
-  track.addEventListener('scroll', sync, { passive: true });
+  prev.addEventListener('click', function(){ track.scrollBy({ left:-step(), behavior:'smooth' }); });
+  next.addEventListener('click', function(){ track.scrollBy({ left:step(), behavior:'smooth' }); });
+  track.addEventListener('scroll', sync, { passive:true });
   window.addEventListener('resize', sync);
   sync();
+
+  /* ---------- QR landing: open the booking straight away ---------- */
+  renderCal(); renderSlots(); updateFoot();
+  openFlow('book', $('heroAcct'));
 })();
 </script>
 
