@@ -210,21 +210,22 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 .islands-note{display:flex;gap:.6rem;align-items:center;padding:.7rem .9rem;border-radius:10px;background:#f2f7ee;font-size:.88rem;color:#3f5a2a}
 .islands-note svg{flex:none;width:18px;height:18px;color:var(--green)}
 
-/* Thank-you bar */
-.thanks{position:fixed;inset:0 0 auto;z-index:100;background:var(--brand-grad);color:var(--white);padding-top:env(safe-area-inset-top,0px);box-shadow:0 12px 30px rgba(41,41,53,.22);transform:translateY(-110%);transition:transform 380ms var(--ease-out)}
-.thanks.show{transform:none}
-.thanks .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding-block:16px}
-.thanks .tick{flex:none;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center}
-.thanks .tick svg{width:18px;height:18px}
-.thanks .msg{flex:1 1 320px;min-width:0}
-.thanks strong{display:block;font-family:var(--f-ionic);font-weight:500;font-size:1.25rem;line-height:1.3}
-.thanks span{font-size:.95rem;opacity:.95}
-.thanks .acts{display:flex;flex-wrap:wrap;gap:10px}
-.thanks .pill{min-height:40px;padding:.55rem 1.3rem;font-size:.7rem}
-.thanks .stay{background:transparent;color:var(--white);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
-.thanks .progress{height:3px;background:rgba(255,255,255,.3)}
-.thanks .progress i{display:block;height:100%;background:var(--white);transform-origin:left;transform:scaleX(0)}
-.thanks.run .progress i{transform:scaleX(1);transition:transform var(--dur,4s) linear}
+/* Thank-you state (inside the same pop-up) */
+.ty{position:relative;display:grid;justify-items:center;text-align:center;gap:14px;padding:52px 36px 40px;background:var(--mist-grad)}
+.ty .bar{position:absolute;inset:0 0 auto;height:4px;background:var(--brand-grad)}
+.ty .tick{width:64px;height:64px;border-radius:50%;background:var(--brand-grad);color:var(--white);display:grid;place-items:center;box-shadow:0 10px 26px rgba(111,170,140,.35);transform:scale(.6);opacity:0;transition:transform 420ms cubic-bezier(.34,1.4,.64,1) 80ms,opacity 200ms ease 80ms}
+.ty .tick svg{width:28px;height:28px}
+.ty .tick path{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset 360ms var(--ease-out) 260ms}
+.ty h2{font-size:1.9rem;line-height:1.2;margin-top:6px}
+.ty p{margin:0;max-width:30em;color:#4b4d5a}
+.ty .pill{margin-top:10px;min-height:52px;padding:.85rem 2.4rem;font-size:.8rem}
+.ty .progress{position:absolute;inset:auto 0 0;height:3px;background:rgba(41,41,53,.08)}
+.ty .progress i{display:block;height:100%;background:var(--brand-grad);transform-origin:left;transform:scaleX(0)}
+dialog.auth.done .ty .tick{transform:none;opacity:1}
+dialog.auth.done .ty .tick path{stroke-dashoffset:0}
+dialog.auth.done.run .ty .progress i{transform:scaleX(1);transition:transform var(--dur,3s) linear}
+.ty-swap{animation:tySwap 260ms var(--ease-out)}
+@keyframes tySwap{from{opacity:0;filter:blur(4px);transform:scale(.985)}to{opacity:1;filter:none;transform:none}}
 
 /* Mobile menu */
 .mobile-nav{display:none}
@@ -265,23 +266,10 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}
   dialog.auth{transform:none!important}
-  .thanks{transition:opacity 200ms ease!important;transform:none;opacity:0}
-  .thanks.show{opacity:1}
+  .ty-swap{animation:none}
   .submit .spin{animation:none}
 }
 </style>
-
-<div class="thanks" id="thanks" role="status" aria-live="polite" hidden>
-  <div class="wrap">
-    <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
-    <div class="msg"><strong id="thanksTitle">Thank you</strong><span id="thanksText">Taking you to the Guernsey Energy shop.</span></div>
-    <div class="acts">
-      <a class="pill pill-white" id="shopNow" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums" target="_top" rel="noopener">Go to the shop now</a>
-      <button class="pill stay" id="stay" type="button">Stay on this page</button>
-    </div>
-  </div>
-  <div class="progress"><i></i></div>
-</div>
 
 <header class="site-header">
   <div class="wrap">
@@ -551,12 +539,24 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
       </form>
     </div>
   </div>
+
+  <div class="ty" id="ty" hidden>
+    <span class="bar" aria-hidden="true"></span>
+    <button class="x" type="button" id="tyClose" aria-label="Close and go to the vacuums shop">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l10 10M13 3 3 13"/></svg>
+    </button>
+    <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></svg></div>
+    <h2 id="tyTitle" tabindex="-1">Thank you</h2>
+    <p id="tyText">Close this message to go straight to the Guernsey Energy vacuums shop.</p>
+    <a class="pill pill-grad" id="tyGo" href="https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums" rel="noopener">Shop vacuums</a>
+    <div class="progress" aria-hidden="true"><i></i></div>
+  </div>
 </dialog>
 
 <script>
 (function(){
   var SHOP = 'https://guernseyenergy.gg/shop/home-outdoor/floorcare/vacuums';
-  var REDIRECT_MS = 4000;
+  var REDIRECT_MS = 3000;
   var root = document.documentElement;
   var dlg = document.getElementById('auth');
   var tabs = document.getElementById('tabs');
@@ -601,7 +601,23 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
   });
 
   /* Open / close */
+  var warmed = false;
+  function warmShop(){
+    if (warmed) return; warmed = true;
+    try {
+      [['preconnect','https://guernseyenergy.gg'],['prefetch',SHOP]].forEach(function(p){
+        var l = document.createElement('link'); l.rel = p[0]; l.href = p[1]; if (p[0]==='preconnect') l.crossOrigin = '';
+        document.head.appendChild(l);
+      });
+      if (HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) {
+        var s = document.createElement('script'); s.type = 'speculationrules';
+        s.textContent = JSON.stringify({ prefetch: [{ source: 'list', urls: [SHOP] }] });
+        document.head.appendChild(s);
+      }
+    } catch (e) {}
+  }
   function openAuth(tab, trigger){
+    warmShop();
     lastTrigger = trigger || null;
     setTab(tab || 'login');
     if (!dlg.open) {
@@ -626,10 +642,12 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
       openAuth(b.dataset.open, b);
     });
   });
+  function dismiss(){ if (dlg.classList.contains('done')) goShop(); else closeAuth(); }
   document.getElementById('authClose').addEventListener('click', function(){ closeAuth(); });
-  dlg.addEventListener('cancel', function(e){ e.preventDefault(); closeAuth(); });
+  document.getElementById('tyClose').addEventListener('click', function(){ goShop(); });
+  dlg.addEventListener('cancel', function(e){ e.preventDefault(); dismiss(); });
   dlg.addEventListener('mousedown', function(e){ if (e.target === dlg) dlg.dataset.down = '1'; });
-  dlg.addEventListener('click', function(e){ if (e.target === dlg && dlg.dataset.down) closeAuth(); delete dlg.dataset.down; });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg && dlg.dataset.down) dismiss(); delete dlg.dataset.down; });
 
   /* Password peek */
   document.querySelectorAll('[data-peek]').forEach(function(b){
@@ -691,7 +709,7 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
       var name = kind === 'signup' ? document.getElementById('su-first').value.trim() : '';
       setTimeout(function(){
         btn.classList.remove('busy'); btn.querySelector('.txt').textContent = kind === 'login' ? 'Log in' : 'Create account';
-        closeAuth(function(){ form.reset(); noteText.textContent = "You'll be set up with Guernsey Energy."; showThanks(kind, name); });
+        form.reset(); noteText.textContent = "You'll be set up with Guernsey Energy."; showThanks(kind, name);
       }, 750);
     };
   }
@@ -699,35 +717,46 @@ select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xml
   panels.signup.addEventListener('submit', submitHandler('signup'));
 
   /* Thank you + redirect */
-  var bar = document.getElementById('thanks'), timer = null;
+  var ty = document.getElementById('ty'), inner = dlg.querySelector('.auth-inner'), tyGo = document.getElementById('tyGo'), timer = null, leaving = false;
   var embedded = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
-  function goShop(){
-    if (!embedded) { window.location.href = SHOP; return; }
-    var w = null; try { w = window.open(SHOP, '_blank'); } catch(e){}
-    if (!w) { document.getElementById('thanksText').textContent = 'Use the button to open the Guernsey Energy shop.'; showBar(); }
+  if (embedded) { tyGo.target = '_blank'; }
+  function resetDialog(){
+    clearTimeout(timer); leaving = false;
+    dlg.classList.remove('done','run'); ty.hidden = true; inner.hidden = false;
   }
-  function showBar(){ bar.hidden = false; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.classList.add('show'); }); }); }
+  function goShop(){
+    clearTimeout(timer);
+    if (!embedded) {
+      if (leaving) return; leaving = true;
+      window.location.href = SHOP;   /* the pop-up stays on screen until the shop page paints */
+      return;
+    }
+    /* Inside a preview frame the browser may block leaving the page, so open the shop in a new tab instead */
+    var w = null; try { w = window.open(SHOP, '_blank'); } catch(e){}
+    closeAuth(resetDialog);
+  }
   function showThanks(kind, name){
-    document.getElementById('thanksTitle').textContent = kind === 'signup'
-      ? 'Thank you' + (name ? ', ' + name : '') + '. Your account is ready.'
-      : 'Thank you. You’re logged in.';
-    document.getElementById('thanksText').textContent = 'Taking you to the Guernsey Energy shop to browse vacuums.';
+    document.getElementById('tyTitle').textContent = kind === 'signup'
+      ? 'Thank you' + (name ? ', ' + name : '')
+      : 'Thank you for logging in';
+    document.getElementById('tyText').textContent = (kind === 'signup' ? 'Your account is ready. ' : 'You\u2019re all set. ')
+      + 'Close this message to go straight to the Guernsey Energy vacuums shop.';
     var acct = document.getElementById('headerAcctText');
     acct.textContent = name ? 'Hi, ' + name : 'My account';
     document.getElementById('headerAcct').dataset.signedIn = '1';
     var hero = document.getElementById('heroAcct'); hero.dataset.signedIn = '1'; hero.querySelector('span').textContent = 'Shop vacuums';
-    bar.style.setProperty('--dur', REDIRECT_MS + 'ms');
-    bar.classList.remove('run');
-    showBar();
-    setTimeout(function(){ bar.classList.add('run'); }, 380);
+    inner.hidden = true; ty.hidden = false;
+    ty.classList.remove('ty-swap'); void ty.offsetWidth; ty.classList.add('ty-swap');
+    dlg.style.setProperty('--dur', REDIRECT_MS + 'ms');
+    requestAnimationFrame(function(){ dlg.classList.add('done'); requestAnimationFrame(function(){ dlg.classList.add('run'); }); });
+    document.getElementById('tyTitle').focus({ preventScroll: true });
     clearTimeout(timer);
-    timer = setTimeout(goShop, REDIRECT_MS + 380);
+    timer = setTimeout(goShop, REDIRECT_MS);
   }
-  document.getElementById('stay').addEventListener('click', function(){
-    clearTimeout(timer); bar.classList.remove('show');
-    setTimeout(function(){ bar.hidden = true; bar.classList.remove('run'); }, 400);
+  tyGo.addEventListener('click', function(e){
+    clearTimeout(timer);
+    if (!embedded) { e.preventDefault(); goShop(); } else { closeAuth(resetDialog); }
   });
-  document.getElementById('shopNow').addEventListener('click', function(){ clearTimeout(timer); });
 
   /* News carousel */
   var track = document.getElementById('newsTrack'), prev = document.getElementById('prev'), next = document.getElementById('next');
