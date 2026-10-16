@@ -10,7 +10,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=Poppins:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=Poppins:wght@500;600&display=swap">
 <style>
 /* Layout: the existing IEG homepage, section for section, with one account entry point added to the hero and header */
 :root{
@@ -25,7 +25,7 @@
   --brand-grad:linear-gradient(90deg,#90b664 0%,#83bbc2 100%);
   --mist-grad:linear-gradient(135deg,#d3e3e6 0%,#e0f0f3 100%);
   --f-soft:"Duplicate Soft","DuplicateSoft-Regular-Web","Bitter",Georgia,serif;
-  --f-ionic:"Duplicate Ionic","DuplicateIonic-Regular-Web","Source Serif 4","Bitter",Georgia,serif;
+  --f-ionic:var(--f-soft); /* one family for headings and text: Duplicate Soft */
   --f-ui:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
   --ease-out:cubic-bezier(0.23,1,0.32,1);
   --gutter-l:max(16px,env(safe-area-inset-left,0px));
